@@ -10,8 +10,16 @@ d3.json(earthquakes).then(function(data) {
 
     events.forEach(function(event) {
         let geometry = event.geometry.coordinates;
-        console.log("geometry:", geometry);
         
+
+        let latitude = []
+        let longitude = []
+        let depth = []
+
+        latitude = geometry[1]
+        longitude = geometry[0]
+        depth = geometry[2]
+        console.log(latitude)
 
     });
     
