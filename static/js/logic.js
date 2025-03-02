@@ -40,7 +40,7 @@ d3.json(earthquakes).then(function(data) {
             depth >= 10 ? '#FED976' :
             '#FFFFB2';    
     }
-    // Loop through lists, make markers and add pop ups.
+    // Loop through lists, make markers and add pop-ups.
     for (let i = 0; i < latitudes.length; i++) {
         let lat = latitudes[i];
         let lon = longitudes[i];
