@@ -10,7 +10,7 @@ d3.json(earthquakes).then(function(data) {
     let latitudes = [];
     let longitudes = [];
     let depths = [];
-    let places = []
+    let places = [];
     // Loop with forEach
     data.features.forEach(function(feature) {
         // Fill with data
