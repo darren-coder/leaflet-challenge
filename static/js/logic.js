@@ -31,6 +31,7 @@ d3.json(earthquakes).then(function(data) {
     console.log("Longitudes:", longitudes);
     console.log("Depths:", depths);
     console.log("Places:", places);
+    
     // Set color scale
     function getColor(depth) {
         return depth >= 90 ? '#BD0026' : 
@@ -47,7 +48,7 @@ d3.json(earthquakes).then(function(data) {
         let mag = magnitudes[i];
         let depth = depths[i];
         let place = places[i];
-
+        // Style for the markers
         L.circleMarker([lat, lon], {
             radius: mag * 4, 
             fillColor: getColor(depth),
@@ -60,6 +61,7 @@ d3.json(earthquakes).then(function(data) {
         .addTo(map);
     }    
 });
+// Making the map
 // Add tile layer  
 let usMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -73,20 +75,54 @@ let baseMaps = {
     "US MAP": usMap
 };
 
-L.control.layers(baseMaps).addTo(map);
+// define geoJSON file
+let techtonicGeo = "./techtonic_plates.json";
+// Fetch the geoJSON data
+fetch(techtonicGeo)
+  .then(response => response.json())  // Parse the response as JSON
+  .then(data => {
+    console.log("Techtonic Plates Data:", data);  // Log the actual GeoJSON data
 
+    // Now you can add the GeoJSON to the map
+    let overlayMaps = {
+        "Techtonic Plates": L.geoJSON(data, {
+            pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng, styleFeature(feature));
+            }
+        }).addTo(map)
+    };
+
+    // Add geoJSON to the layers control
+    L.control.layers(baseMaps, overlayMaps).addTo(map);
+})
+  .catch(error => {
+    console.error("Error loading GeoJSON file:", error);
+  });
+
+// Styling for geoJSON layer
+function styleFeature(feature) {
+    return {
+        radius: 6,
+        fillColor: "#800080",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+    };
+}
+
+// make the Legend
 let legend = L.control({ position: 'bottomright' });
 
 legend.onAdd = function(map) {
     let div = L.DomUtil.create('div', 'info legend');
-
+    // Styling for Legend
     div.style.backgroundColor = "#ffffff";
     div.style.padding = "10px";
     div.style.border = "1px solid #ccc";
     div.style.borderRadius = "5px";
    
     
-    // Set up the legend content. You can add more items here with different colors or descriptions.
+    // Content for legend
     div.innerHTML = `
         <h4>Depth (km)</h4>
         <i style="background: #ffffb2; width: 18px; height: 18px; display: inline-block; margin-right: 5px;"></i> -10-10<br>
@@ -101,7 +137,7 @@ legend.onAdd = function(map) {
     return div;
 };
 
-// Add the legend to the map
+// Add legend to map
 legend.addTo(map);
 
 
